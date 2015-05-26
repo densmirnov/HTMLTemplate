@@ -71,7 +71,10 @@ gulp.task("images", function() {
             progressive: true,
             interlaced: true
         })))
-        .pipe(gulp.dest("_build/i/"));
+        .pipe(gulp.dest("_build/i/"))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 
@@ -81,7 +84,10 @@ gulp.task("images", function() {
 gulp.task("svg", function() {
     gulp.src("_source/i/**/*.svg")
         .pipe($.svgmin())
-        .pipe(gulp.dest("_build/i/"));
+        .pipe(gulp.dest("_build/i/"))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 
@@ -90,7 +96,10 @@ gulp.task("svg", function() {
  ** ******************** */
 gulp.task("fonts", function() {
     gulp.src("_source/css/fonts/*")
-        .pipe(gulp.dest("_build/css/fonts"));
+        .pipe(gulp.dest("_build/css/fonts"))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 
@@ -111,7 +120,10 @@ gulp.task("html", function() {
             useShortDoctype: true,
             removeIgnored: true
         }))
-        .pipe(gulp.dest("_build"));
+        .pipe(gulp.dest("_build"))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 
@@ -152,5 +164,5 @@ gulp.task("browser-sync", function() {
  ** ******************** */
 var runSequence = require("run-sequence");
 gulp.task("default", function() {
-    runSequence("clean", ["js", "css", "fonts", "images", "svg", "html"], "browser-sync");
+    runSequence("clean", ["js", "css", "fonts", "images", "svg"], "html", "browser-sync");
 });
