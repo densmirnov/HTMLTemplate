@@ -10,7 +10,6 @@ var $ = require('gulp-load-plugins')({
     }
 });
 
-
 /* ********************
  ** TASK: CLEAN
  ** ******************** */
@@ -25,7 +24,7 @@ gulp.task("clean", function() {
  ** ******************** */
 gulp.task("js", function() {
     return gulp.src("_source/js/**/*.js")
-        .pipe($.order(["jquery*.js", "jquery.*.js", "d3*.js", "app.js", "main.js", "**/*.js"]))
+        .pipe($.order(["jquery*.js", "jquery.*.js", "d3*.js", "wow*.js", "app.js", "main.js", "**/*.js"]))
         .pipe($.concat("main.js"))
         .pipe(gulp.dest("_build/js/"))
         .pipe($.rename({
@@ -64,17 +63,14 @@ gulp.task("css", function() {
 /* ********************
  ** TASK: IMAGES
  ** ******************** */
-gulp.task("images", function() {
+gulp.task("img", function() {
     gulp.src("_source/i/**/*")
         .pipe($.cache($.imagemin({
             optimizationLevel: 3,
             progressive: true,
             interlaced: true
         })))
-        .pipe(gulp.dest("_build/i/"))
-        .pipe(browserSync.reload({
-            stream: true
-        }));
+        .pipe(gulp.dest("_build/i/"));
 });
 
 
@@ -153,7 +149,7 @@ gulp.task("browser-sync", function() {
     gulp.watch("_source/js/**/*.js", ["js"]);
     gulp.watch("_source/css/**/*.css", ["css"]);
     gulp.watch("_source/css/fonts/*", ["fonts"]);
-    gulp.watch("_source/i/**/*", ["images"]);
+    gulp.watch("_source/i/**/*", ["img"]);
     gulp.watch("_source/i/**/*.svg", ["svg"]);
     gulp.watch("_source/*.html", ["html"]);
 });
@@ -164,5 +160,5 @@ gulp.task("browser-sync", function() {
  ** ******************** */
 var runSequence = require("run-sequence");
 gulp.task("default", function() {
-    runSequence("clean", ["js", "css", "fonts", "images", "svg"], "html", "browser-sync");
+    runSequence("clean", ["js", "css", "fonts", "img", "svg"], "html", "browser-sync");
 });
