@@ -26,15 +26,15 @@ gulp.task("js", function() {
     return gulp.src("_source/js/**/*.js")
         .pipe($.order(["jquery*.js", "jquery.*.js", "d3*.js", "wow*.js", "app.js", "main.js", "**/*.js"]))
         .pipe($.concat("main.js"))
-        .pipe(gulp.dest("_build/js/"))
+    .pipe(gulp.dest("_build/js/"))
         .pipe($.rename({
             suffix: ".min"
         }))
         .pipe($.uglify())
-        .pipe(gulp.dest("_build/js/"))
-        .pipe(browserSync.reload({
-            stream: true
-        }));
+    .pipe(gulp.dest("_build/js/"))
+    .pipe(browserSync.reload({
+        stream: true
+    }));
 });
 
 
@@ -48,15 +48,17 @@ gulp.task("css", function() {
         .pipe($.uncss({
             html: ["index.html", "_source/**/*.html"]
         }))
-        .pipe(gulp.dest("_build/css/"))
+        .pipe($.csscomb())
+        .pipe($.shorthand())
+    .pipe(gulp.dest("_build/css/"))
         .pipe($.rename({
             suffix: ".min"
         }))
         .pipe($.csso())
-        .pipe(gulp.dest("_build/css/"))
-        .pipe(browserSync.reload({
-            stream: true
-        }));
+    .pipe(gulp.dest("_build/css/"))
+    .pipe(browserSync.reload({
+        stream: true
+    }));
 });
 
 
@@ -158,7 +160,15 @@ gulp.task("browser-sync", function() {
 /* ********************
  ** TASK: DEFAULT
  ** ******************** */
-var runSequence = require("run-sequence");
-gulp.task("default", function() {
-    runSequence("clean", ["js", "css", "fonts", "img", "svg"], "html", "browser-sync");
+gulp.task("build", ["clean"], function() {
+	gulp.start("js");
+	gulp.start("css");
+	gulp.start("fonts");
+	gulp.start("img");
+	gulp.start("svg");
+	gulp.start("html");
+});
+
+gulp.task("default", ["build"], function() {
+	gulp.start("browser-sync");
 });
