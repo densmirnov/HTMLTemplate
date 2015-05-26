@@ -6,6 +6,7 @@ var $ = require('gulp-load-plugins')({
     lazy: true,
     rename: {
         'gulp-html-replace': 'htmlReplace',
+        'gulp-inline-css': 'inlineCSS',
         'gulp-inline-source': 'inlineSource'
     }
 });
@@ -26,15 +27,15 @@ gulp.task("js", function() {
     return gulp.src("_source/js/**/*.js")
         .pipe($.order(["jquery*.js", "jquery.*.js", "d3*.js", "wow*.js", "app.js", "main.js", "**/*.js"]))
         .pipe($.concat("main.js"))
-    .pipe(gulp.dest("_build/js/"))
+        .pipe(gulp.dest("_build/js/"))
         .pipe($.rename({
             suffix: ".min"
         }))
         .pipe($.uglify())
-    .pipe(gulp.dest("_build/js/"))
-    .pipe(browserSync.reload({
-        stream: true
-    }));
+        .pipe(gulp.dest("_build/js/"))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 
@@ -50,15 +51,15 @@ gulp.task("css", function() {
         }))
         .pipe($.csscomb())
         .pipe($.shorthand())
-    .pipe(gulp.dest("_build/css/"))
+        .pipe(gulp.dest("_build/css/"))
         .pipe($.rename({
             suffix: ".min"
         }))
         .pipe($.csso())
-    .pipe(gulp.dest("_build/css/"))
-    .pipe(browserSync.reload({
-        stream: true
-    }));
+        .pipe(gulp.dest("_build/css/"))
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 
@@ -129,9 +130,28 @@ gulp.task("html", function() {
  ** TASK: INLINE
  ** ******************** */
 gulp.task("inline", function() {
-    return gulp.src('_build/index.html')
-        .pipe(inlinesource())
-        .pipe(gulp.dest('_inline'));
+    return gulp.src('_build/*.html')
+        .pipe($.inlineCSS())
+        .pipe($.rename({
+            suffix: ".inline"
+        }))
+        .pipe(gulp.dest('_build/'));
+});
+
+
+/* ********************
+ ** TASK: MANIFEST
+ ** ******************** */
+gulp.task('manifest', function() {
+    gulp.src(['_build/**/*'])
+        .pipe($.manifest({
+            hash: true,
+            preferOnline: false,
+            network: ['http://*', 'https://*'],
+            filename: 'cache.manifest',
+            exclude: 'cache.manifest'
+        }))
+        .pipe(gulp.dest('_build'));
 });
 
 
@@ -161,14 +181,14 @@ gulp.task("browser-sync", function() {
  ** TASK: DEFAULT
  ** ******************** */
 gulp.task("build", ["clean"], function() {
-	gulp.start("js");
-	gulp.start("css");
-	gulp.start("fonts");
-	gulp.start("img");
-	gulp.start("svg");
-	gulp.start("html");
+    gulp.start("js");
+    gulp.start("css");
+    gulp.start("fonts");
+    gulp.start("img");
+    gulp.start("svg");
+    gulp.start("html");
 });
 
 gulp.task("default", ["build"], function() {
-	gulp.start("browser-sync");
+    gulp.start("browser-sync");
 });
